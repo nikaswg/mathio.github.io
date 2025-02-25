@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Производные - Обзор</title>
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin-top: 100px;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #ffffff;
+            padding-bottom: 60px;
+        }
+
+        .header {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-family: 'UnifrakturCook', cursive;
+            font-size: 4rem;
+            color: #BB86FC;
+        }
+
+        .content {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #1E1E1E;
+            border-radius: 10px;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        footer {
+            background-color: #1E1E1E;
+            text-align: center;
+            padding: 10px;
+            color: #B0BEC5;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .admin-form {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>Производные</h1>
+    </div>
+
+    <div class="content" id="articleContent">
+        <h2 id="articleTitle">Что такое производная?</h2>
+        <p id="articleText">Производная функции в точке измеряет скорость изменения функции в этой точке. Например, если функция описывает положение объекта в зависимости от времени, то производная этой функции будет скоростью.</p>
+
+        <h2>Основные правила</h2>
+        <p>Вот некоторые основные правила нахождения производных:</p>
+        <ul>
+            <li>Правило степени: если \( f(x) = x^n \), то \( f'(x) = nx^{n-1} \).</li>
+            <li>Производная суммы: если \( f(x) = g(x) + h(x) \), то \( f'(x) = g'(x) + h'(x) \).</li>
+            <li>Производная произведения: \( (fg)' = f'g + fg' \).</li>
+            <li>Производная частного: \( \left(\frac{f}{g}\right)' = \frac{f'g - fg'}{g^2} \).</li>
+        </ul>
+
+        <h2>Примеры производных</h2>
+        <p>Рассмотрим несколько примеров:</p>
+        <div class="formula">
+            \( f(x) = x^2 \quad \Rightarrow \quad f'(x) = 2x \)
+        </div>
+        <div class="formula">
+            \( f(x) = \sin(x) \quad \Rightarrow \quad f'(x) = \cos(x) \)
+        </div>
+        <div class="formula">
+            \( f(x) = e^x \quad \Rightarrow \quad f'(x) = e^x \)
+        </div>
+        <div class="formula">
+            \( f(x) = \ln(x) \quad \Rightarrow \quad f'(x) = \frac{1}{x} \)
+        </div>
+
+        <h2>Заключение</h2>
+        <p>Производные — это важный инструмент в математике и физике, позволяющий анализировать изменения функций и их поведение. Знание правил дифференцирования помогает решать множество задач в различных областях науки.</p>
+
+        <button onclick="showAdminForm()">Редактировать статью</button>
+
+        <div class="admin-form" id="adminForm">
+            <h3>Форма редактирования статьи</h3>
+            <input type="text" id="newTitle" placeholder="Название статьи" required>
+            <textarea id="newContent" placeholder="Содержимое статьи" required></textarea>
+            <button onclick="updateArticle()">Сохранить</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Нагорнюк Никита Владимирович. Все права защищены.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script>
+        function showAdminForm() {
+            document.getElementById('adminForm').style.display = 'block';
+            document.getElementById('newTitle').value = document.getElementById('articleTitle').innerText;
+            document.getElementById('newContent').value = document.getElementById('articleText').innerText;
+        }
+
+        function updateArticle() {
+            const title = document.getElementById('newTitle').value;
+            const content = document.getElementById('newContent').value;
+            
+            // Обновляем заголовок и содержание статьи
+            document.getElementById('articleTitle').innerText = title;
+            document.getElementById('articleText').innerText = content;
+
+            // Скрываем форму редактирования
+            document.getElementById('adminForm').style.display = 'none';
+            alert("Статья обновлена!");
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]); // Обновляем MathJax
+        }
+    </script>
+</body>
+
+</html>
