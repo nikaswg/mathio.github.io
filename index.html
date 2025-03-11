@@ -39,6 +39,7 @@
             background-color: #1E1E1E;
             padding: 10px 20px;
             justify-content: space-between;
+            flex-wrap: wrap;
         }
 
         .nav-image {
@@ -51,6 +52,7 @@
             display: flex;
             flex-grow: 1;
             justify-content: space-around;
+            flex-wrap: wrap;
         }
 
         .menu-button {
@@ -66,7 +68,7 @@
             cursor: pointer;
             transition: background-color 0.3s, transform 0.2s;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            margin: 0 10px;
+            margin: 5px;
         }
 
         .menu-button:hover {
@@ -84,11 +86,13 @@
             margin-top: 20px;
             padding: 10px;
             background-color: #2A2A2A;
+            width: 100%;
         }
 
         .flex-container {
             display: flex;
             margin-top: 20px;
+            flex-direction: column;
         }
 
         .nav-section {
@@ -184,6 +188,71 @@
             background-color: #8A5BFC;
             transform: scale(0.95);
         }
+
+        /* Адаптация под мобильные устройства */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .menu {
+                flex-direction: column;
+                width: 100%;
+                display: none;
+            }
+
+            .menu.active {
+                display: flex;
+            }
+
+            .menu-button {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            .nav-image {
+                margin: 10px 0;
+            }
+
+            .flex-container {
+                flex-direction: column;
+            }
+
+            .nav-section, .content-section {
+                width: 100%;
+                padding-right: 0;
+            }
+
+            .content-block {
+                margin-top: 10px;
+            }
+        }
+
+        /* Бургер-меню */
+        .burger-menu {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+        .burger-menu div {
+            width: 25px;
+            height: 3px;
+            background-color: #BB86FC;
+            margin: 4px 0;
+        }
+
+        @media (max-width: 768px) {
+            .burger-menu {
+                display: flex;
+            }
+        }
     </style>
 </head>
 
@@ -194,10 +263,16 @@
 
     <nav>
         <img src="https://otvet.imgsmail.ru/download/213619861_4ca14290ae843d61a3fccbea523ccfb8_800.jpg" alt="Изображение" class="nav-image">
-        <div class="menu">
+        <div class="burger-menu" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="menu" id="menu">
             <button class="menu-button" onclick="toggleSubMenu('calc')">Калькуляторы</button>
             <button class="menu-button" onclick="toggleSubMenu('material')">Справочные материалы</button>
             <button class="menu-button" onclick="toggleSubMenu('tests')">Тесты</button>
+            <button class="menu-button" onclick="Open_Service()">Сервис</button>
             <button class="menu-button" onclick="Login()">Войти</button>
         </div>
     </nav>
@@ -237,7 +312,7 @@
                         <div id="result" style="margin-top: 10px;"></div>
                     </div>
                 </div>
-                
+
                 <div id="limitSequence" class="content-block">
                     <h3>Калькулятор предела числовой последовательности</h3>
                     <div class="calculator">
@@ -257,7 +332,6 @@
                         И счастье в сердце есть.
                     </pre>
                 </div>
-                <!-- Add more content blocks as needed -->
             </div>
         </div>
     </div>
@@ -275,18 +349,18 @@
 
             if (menuId === 'calc') {
                 calcSubmenu.style.display = calcSubmenu.style.display === "none" || calcSubmenu.style.display === "" ? "block" : "none";
-                materialsSubmenu.style.display = "none"; // Hide materials submenu
-                testsSubmenu.style.display = "none"; // Hide tests submenu
+                materialsSubmenu.style.display = "none";
+                testsSubmenu.style.display = "none";
                 clearContent();
             } else if (menuId === 'material') {
                 materialsSubmenu.style.display = materialsSubmenu.style.display === "none" || materialsSubmenu.style.display === "" ? "block" : "none";
-                calcSubmenu.style.display = "none"; // Hide calculators submenu
-                testsSubmenu.style.display = "none"; // Hide tests submenu
+                calcSubmenu.style.display = "none";
+                testsSubmenu.style.display = "none";
                 clearContent();
             } else if (menuId === 'tests') {
                 testsSubmenu.style.display = testsSubmenu.style.display === "none" || testsSubmenu.style.display === "" ? "block" : "none";
-                calcSubmenu.style.display = "none"; // Hide calculators submenu
-                materialsSubmenu.style.display = "none"; // Hide materials submenu
+                calcSubmenu.style.display = "none";
+                materialsSubmenu.style.display = "none";
             }
         }
 
@@ -307,41 +381,29 @@
         }
 
         function calculateLimit() {
-    const expression = document.getElementById('sequenceInput').value;
-    const resultDiv = document.getElementById('limitResult');
+            const expression = document.getElementById('sequenceInput').value;
+            const resultDiv = document.getElementById('limitResult');
 
-    try {
-        // Определяем функцию от x
-        const f = math.compile(expression);
+            try {
+                const f = math.compile(expression);
+                const limitAtInfinity = f.evaluate({ x: 1e10 });
+                const limitAtNegativeInfinity = f.evaluate({ x: -1e10 });
 
-        // Проверяем, является ли выражение линейным
-        if (expression.trim() === 'n') {
-            resultDiv.innerText = `Предел функции ${expression} при x → ∞ равен: бесконечность`;
-            return;
+                let formattedLimit;
+
+                if (limitAtInfinity === Infinity || limitAtNegativeInfinity === Infinity) {
+                    formattedLimit = 'бесконечность';
+                } else if (limitAtInfinity === -Infinity || limitAtNegativeInfinity === -Infinity) {
+                    formattedLimit = '-бесконечность';
+                } else {
+                    formattedLimit = limitAtInfinity.toFixed(4);
+                }
+
+                resultDiv.innerText = `Предел функции ${expression} при x → ∞ равен: ${formattedLimit}`;
+            } catch (error) {
+                resultDiv.innerText = "Ошибка: " + error.message;
+            }
         }
-
-        // Проверяем значение при большом x
-        const limitAtInfinity = f.evaluate({ x: 1e10 }); // Приближаемся к бесконечности
-        const limitAtNegativeInfinity = f.evaluate({ x: -1e10 }); // Приближаемся к -бесконечности
-
-        // Форматируем вывод
-        let formattedLimit;
-
-        // Логика для определения предела
-        if (limitAtInfinity === Infinity || limitAtNegativeInfinity === Infinity) {
-            formattedLimit = 'бесконечность';
-        } else if (limitAtInfinity === -Infinity || limitAtNegativeInfinity === -Infinity) {
-            formattedLimit = '-бесконечность';
-        } else {
-            // Округляем до 4 знаков после запятой
-            formattedLimit = limitAtInfinity.toFixed(4);
-        }
-
-        resultDiv.innerText = `Предел функции ${expression} при x → ∞ равен: ${formattedLimit}`;
-    } catch (error) {
-        resultDiv.innerText = "Ошибка: " + error.message;
-    }
-}
 
         function calculateDerivative() {
             const expression = document.getElementById('functionInput').value;
@@ -370,6 +432,15 @@
 
         function Login() {
             window.location.href = 'login.php';
+        }
+
+        function Open_Service() {
+            window.location.href = 'service.html';
+        }
+
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('active');
         }
     </script>
 </body>
